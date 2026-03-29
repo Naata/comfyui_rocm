@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
   curl
 
 ARG COMFYUI_VERSION="master"
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git ./ --branch $COMFYUI_VERSION
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git ./ --branch $COMFYUI_VERSION --depth 1  
 
 RUN pip install -r requirements.txt
 RUN pip install -r manager_requirements.txt
