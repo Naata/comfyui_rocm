@@ -1,36 +1,37 @@
-# This is a basic workflow to help you get started with Actions
+name: Package ComfyUI
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      comfyui_branch: 
+        default: master
+        description: ComfyUI branch to package
+      base_image:
+        default: rocm7.2_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        description: Base image
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v5
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Build ComfyUI image
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          cd ./docker
+          docker build \
+            -t naata/comfyui-rocm:${{ inputs.base_image }}_${{ inputs.comfyui_branch }} \
+            --build-arg BASE_IMAGE=${{ inputs.base_image }} \
+            --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }}
+            .
+
+      - name: Login to Docker Container Registry
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Push docker images
+        run: |
+          docker push naata/comfyui-rocm --all-tags
