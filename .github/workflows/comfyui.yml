@@ -7,8 +7,8 @@ on:
         default: master
         description: ComfyUI branch to package
       base_image:
-        default: rocm/pytorch:rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
-        description: Base image
+        default: rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        description: Base image for ROCM/PyTorch
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
           cd ./docker
           docker build \
             -t naata/comfyui-rocm:${{ inputs.base_image }}_${{ inputs.comfyui_branch }} \
-            --build-arg BASE_IMAGE=${{ inputs.base_image }} \
+            --build-arg BASE_IMAGE=rocm/pytorch:${{ inputs.base_image }} \
             --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }} \
             .
 
