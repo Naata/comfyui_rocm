@@ -20,11 +20,10 @@ jobs:
       - name: Build ComfyUI image
         run: |
           cd ./docker
-          docker build \
+          docker build . \
             -t naata/comfyui-rocm:${{ inputs.base_image }}_${{ inputs.comfyui_branch }} \
             --build-arg BASE_IMAGE=${{ inputs.base_image }} \
             --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }}
-            .
 
       - name: Login to Docker Container Registry
         uses: docker/login-action@v4
