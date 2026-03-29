@@ -21,7 +21,7 @@ jobs:
         run: |
           cd ./docker
           docker build \
-            -t naata/comfyui-rocm:${{ inputs.base_image }}_${{ inputs.comfyui_branch }} \
+            -t naata/comfyui-rocm:${{ inputs.base_image }}_comfyui_${{ inputs.comfyui_branch }} \
             --build-arg BASE_IMAGE=rocm/pytorch:${{ inputs.base_image }} \
             --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }} \
             .
