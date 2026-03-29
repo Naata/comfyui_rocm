@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="rocm7.2_ubuntu24.04_py3.12_pytorch_release_2.9.1"
+ARG BASE_IMAGE="rocm/pytorch:rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1"
 FROM $BASE_IMAGE
 
 ENV COMFYUI_PATH="/workspace"

@@ -7,7 +7,7 @@ on:
         default: master
         description: ComfyUI branch to package
       base_image:
-        default: rocm7.2_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        default: rocm/pytorch:rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
         description: Base image
 
 jobs:
@@ -20,10 +20,11 @@ jobs:
       - name: Build ComfyUI image
         run: |
           cd ./docker
-          docker build . \
+          docker build \
             -t naata/comfyui-rocm:${{ inputs.base_image }}_${{ inputs.comfyui_branch }} \
             --build-arg BASE_IMAGE=${{ inputs.base_image }} \
-            --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }}
+            --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }} \
+            .
 
       - name: Login to Docker Container Registry
         uses: docker/login-action@v4
