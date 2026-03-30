@@ -19,8 +19,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v5
-
     - name: Build ComfyUI image ${{ inputs.comfyui_branch }} with ${{ inputs.base_image }}
       run: |
         cd ./docker
