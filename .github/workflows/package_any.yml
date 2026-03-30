@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: ./package_comfyui.yml
+      - uses: ./actions/package
         with:
           base_image: ${{ inputs.base_image }}
           comfyui_branch: ${{ inputs.comfyui_branch }}
