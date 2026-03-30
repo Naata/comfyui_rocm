@@ -1,0 +1,42 @@
+name: Package ComfyUI
+run-name: Package ComfyUI branch ${{ inputs.comfyui_branch }} with ${{ inputs.base_image }}
+on:
+  schedule:
+     - cron: "0 1 * * *"
+  workflow_dispatch:
+    inputs:
+      comfyui_branch: 
+        default: master
+        description: ComfyUI branch to package
+      base_image:
+        default: rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        description: Base image for ROCM/PyTorch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Resolve branch and base image
+        id: resolve-variables
+        shell: bash
+        run: |
+          comfyui_branch=${{ inputs.comfyui_branch }}
+          base_image=${{ inputs.base_image }}
+          if [ ${{ github.event_name }} == 'schedule' ]; then
+            comfyui_branch="master"
+            base_image="rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1"
+          fi
+
+          echo "comfyui_branch=${comfyui_branch}" >> "$GITHUB_OUTPUT"
+          echo "base_image=${base_image}" >> "$GITHUB_OUTPUT"
+
+      - uses: ./actions/package
+        with:
+          base_image: ${{ steps.resolve-variables.outputs..base_image }}
+          comfyui_branch: ${{ steps.resolve-variables.outputs.comfyui_branch }}
+          docker-username: ${{ secrets.DOCKER_USER }}
+          docker-password: ${{ secrets.DOCKER_TOKEN }}
+          repository: naata/comfyui-rocm
