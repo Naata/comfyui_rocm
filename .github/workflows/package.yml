@@ -19,9 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Resolve branch and base image
+      - name: Resolve branch
         id: resolve-variables
-        shell: bash
         run: |
           comfyui_branch=${{ inputs.comfyui_branch }}
           base_image=${{ inputs.base_image }}
@@ -35,7 +34,7 @@ jobs:
 
       - uses: ./actions/package
         with:
-          base_image: ${{ steps.resolve-variables.outputs..base_image }}
+          base_image: ${{ steps.resolve-variables.outputs.base_image }}
           comfyui_branch: ${{ steps.resolve-variables.outputs.comfyui_branch }}
           docker-username: ${{ secrets.DOCKER_USER }}
           docker-password: ${{ secrets.DOCKER_TOKEN }}
