@@ -42,6 +42,9 @@ services:
       - video
     ports:
       - '8188:8188'
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     restart: unless-stopped
     volumes:
       - /local/path/to/models:/workspace/models
