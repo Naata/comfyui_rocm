@@ -1,0 +1,18 @@
+name: Package ComfyUI master
+
+on:
+  schedule:
+     - cron: "0 1 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ./package_comfyui.yml
+        with:
+          base_image: rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
+          comfyui_branch: master
+          docker-username: ${{ secrets.DOCKER_USER }}
+          docker-password: ${{ secrets.DOCKER_TOKEN }}
+          repository: naata/comfyui-rocm

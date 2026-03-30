@@ -1,0 +1,41 @@
+name: Package ComfyUI
+author: Marcin Kuna
+description: A Github action that lets user package ComfyUI with given version using specific AMD ROCM base image
+
+inputs:
+  comfyui_branch: 
+    default: master
+    description: ComfyUI branch to package
+  base_image:
+    default: rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
+    description: Base image for ROCM/PyTorch
+  repository:
+    required: true
+  docker-username: 
+    required: true
+  docker-password:
+    required: true
+  
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v5
+
+    - name: Build ComfyUI image ${{ inputs.comfyui_branch }} with ${{ inputs.base_image }}
+      run: |
+        cd ./docker
+        docker build \
+          -t ${{ inputs.repository }}:${{ inputs.base_image }}_comfyui_${{ inputs.comfyui_branch }} \
+          --build-arg BASE_IMAGE=rocm/pytorch:${{ inputs.base_image }} \
+          --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }} \
+          .
+
+    - name: Login to Docker
+      uses: docker/login-action@v4
+      with:
+        username: ${{ inputs.docker-username }}
+        password: ${{ inputs.docker-password }}
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ inputs.repository }} --all-tags

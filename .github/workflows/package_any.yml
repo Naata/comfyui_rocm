@@ -1,0 +1,24 @@
+name: Package ComfyUI version
+
+on:
+  workflow_dispatch:
+    inputs:
+      comfyui_branch: 
+        default: master
+        description: ComfyUI branch to package
+      base_image:
+        default: rocm7.2.1_ubuntu24.04_py3.12_pytorch_release_2.9.1
+        description: Base image for ROCM/PyTorch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ./package_comfyui.yml
+        with:
+          base_image: ${{ inputs.base_image }}
+          comfyui_branch: ${{ inputs.comfyui_branch }}
+          docker-username: ${{ secrets.DOCKER_USER }}
+          docker-password: ${{ secrets.DOCKER_TOKEN }}
+          repository: naata/comfyui-rocm
