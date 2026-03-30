@@ -11,15 +11,19 @@ inputs:
     description: Base image for ROCM/PyTorch
   repository:
     required: true
+    description: Docker repository
   docker-username: 
     required: true
+    description: Username
   docker-password:
     required: true
+    description: Password
   
 runs:
   using: composite
   steps:
     - name: Build ComfyUI image ${{ inputs.comfyui_branch }} with ${{ inputs.base_image }}
+      shell: bash
       run: |
         cd ./docker
         docker build \
@@ -35,5 +39,6 @@ runs:
         password: ${{ inputs.docker-password }}
 
     - name: Push Docker image
+      shell: bash
       run: |
         docker push ${{ inputs.repository }} --all-tags
