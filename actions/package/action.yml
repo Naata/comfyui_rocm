@@ -18,6 +18,9 @@ inputs:
   docker-password:
     required: true
     description: Password
+  image_tag:
+    required: true
+    description: Image tag
   
 runs:
   using: composite
@@ -27,7 +30,7 @@ runs:
       run: |
         cd ./docker
         docker build \
-          -t ${{ inputs.repository }}:${{ inputs.base_image }}_comfyui_${{ inputs.comfyui_branch }} \
+          -t ${{ inputs.repository }}:${{ inputs.image_tag }} \
           --build-arg BASE_IMAGE=rocm/pytorch:${{ inputs.base_image }} \
           --build-arg COMFYUI_VERSION=${{ inputs.comfyui_branch }} \
           .
