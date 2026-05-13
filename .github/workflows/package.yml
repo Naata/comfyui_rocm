@@ -23,17 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Resolve latest ComfyUI tag
-        id: resolve-latest-tag
-        run: |
-          last_tag=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
-          docker manifest inspect naata/comfyui-rocm:${tag} > /dev/null
-          if [[ "$?" == "1" ]]; then
-            echo "build_tagged=true" >> "$GITHUB_OUTPUT"
-          fi
-
-          echo "comfyui_tag=${last_tag}" >> "$GITHUB_OUTPUT"
-
       - name: Resolve base image
         id: resolve-base-image
         run: |
@@ -42,6 +31,18 @@ jobs:
             base_image="rocm7.2.1_ubuntu24.04_py3.14_pytorch_2.10.0"
           fi
           echo "base_image=${base_image}" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve latest ComfyUI tag
+        id: resolve-latest-tag
+        run: |
+          last_tag=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
+          tag=${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${last_tag}
+          docker manifest inspect naata/comfyui-rocm:${tag} > /dev/null
+          if [[ "$?" == "1" ]]; then
+            echo "build_tagged=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "comfyui_tag=${last_tag}" >> "$GITHUB_OUTPUT"
 
       - uses: ./actions/package
         name: Nightly - Package ComfyUI latest tag
