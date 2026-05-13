@@ -43,6 +43,7 @@ jobs:
           fi
 
           echo "comfyui_tag=${last_tag}" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - uses: ./actions/package
         name: Nightly - Package ComfyUI latest tag
