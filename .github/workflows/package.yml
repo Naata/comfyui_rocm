@@ -37,7 +37,7 @@ jobs:
         run: |
           last_tag=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
           tag=${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${last_tag}
-          image_exists=$(docker manifest inspect naata/comfyui-rocm:${tag} > /dev/null; echo $?)
+          image_exists=$(docker manifest inspect naata/comfyui-rocm:${tag} 2>/dev/null; echo $?)
           if [[ "$image_exists" == "1" ]]; then
             echo "build_tagged=true" >> "$GITHUB_OUTPUT"
           fi
