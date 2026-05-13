@@ -26,12 +26,8 @@ jobs:
       - name: Resolve latest ComfyUI tag
         id: resolve-latest-tag
         run: |
-          last_tag=$(git -c 'versionsort.suffix=-' \
-            ls-remote --exit-code --refs --sort='version:refname' \
-            --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
-
+          last_tag=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
           docker manifest inspect naata/comfyui-rocm:${tag} > /dev/null
-
           if [[ "$?" == "1" ]]; then
             echo "build_tagged=true" >> "$GITHUB_OUTPUT"
           fi
