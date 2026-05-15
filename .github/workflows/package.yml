@@ -38,15 +38,14 @@ jobs:
           last_tag=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
           tag=${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${last_tag}
           image_exists=$(docker manifest inspect naata/comfyui-rocm:${tag} 2>/dev/null; echo $?)
-          if [[ "$image_exists" == "1" ]]; then
-            echo "build_tagged=true" >> "$GITHUB_OUTPUT"
-          fi
 
+          echo "image_exists=${image_exists}" >> "$GITHUB_OUTPUT"
           echo "comfyui_tag=${last_tag}" >> "$GITHUB_OUTPUT"
+          echo "$GITHUB_OUTPUT"
 
       - uses: ./actions/package
         name: Nightly - Package ComfyUI latest tag
-        if: ${{ github.event_name == 'schedule' && steps.resolve-latest-tag.outputs.build_tagged == 'yes' }}
+        if: ${{ github.event_name == 'schedule' && steps.resolve-latest-tag.outputs.image_exists == '1' }}
         with:
           base_image: ${{ steps.resolve-base-image.outputs.base_image }}
           comfyui_branch: ${{ steps.resolve-latest-tag.outputs.comfyui_tag }}
@@ -57,7 +56,7 @@ jobs:
 
       - uses: ./actions/package
         name: Nightly - Package ComfyUI latest tag
-        if: ${{ github.event_name == 'schedule' && steps.resolve-latest-tag.outputs.build_tagged == 'yes' }}
+        if: ${{ github.event_name == 'schedule' && steps.resolve-latest-tag.outputs.image_exists == '1' }}
         with:
           base_image: ${{ steps.resolve-base-image.outputs.base_image }}
           comfyui_branch: ${{ steps.resolve-latest-tag.outputs.comfyui_tag }}
