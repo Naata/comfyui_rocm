@@ -76,13 +76,13 @@ jobs:
           repository: naata/comfyui-rocm
           image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${{ inputs.comfyui_branch }}
 
-      - uses: ./actions/package
-        name: Nightly - Package ComfyUI master
-        if: github.event_name == 'schedule'
-        with:
-          base_image: ${{ steps.resolve-base-image.outputs.base_image }}
-          comfyui_branch: master
-          docker-username: ${{ secrets.DOCKER_USER }}
-          docker-password: ${{ secrets.DOCKER_TOKEN }}
-          repository: naata/comfyui-rocm
-          image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_master
+      # - uses: ./actions/package
+      #   name: Nightly - Package ComfyUI master
+      #   if: github.event_name == 'schedule'
+      #   with:
+      #     base_image: ${{ steps.resolve-base-image.outputs.base_image }}
+      #     comfyui_branch: master
+      #     docker-username: ${{ secrets.DOCKER_USER }}
+      #     docker-password: ${{ secrets.DOCKER_TOKEN }}
+      #     repository: naata/comfyui-rocm
+      #     image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_master
