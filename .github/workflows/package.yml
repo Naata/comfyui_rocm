@@ -36,15 +36,19 @@ jobs:
         id: resolve-latest-tag
         run: |
           last_tag=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags https://github.com/comfy-org/ComfyUI '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
-          tag=${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${last_tag}
           image_exists=$(docker manifest inspect naata/comfyui-rocm:${tag} 2>/dev/null; echo $?)
+
+          prefix=${{ steps.resolve-base-image.outputs.base_image }}_comfyui
 
           echo "image_exists=${image_exists}" >> "$GITHUB_OUTPUT"
           echo "comfyui_tag=${last_tag}" >> "$GITHUB_OUTPUT"
-          echo "$GITHUB_OUTPUT"
+          echo "version_tag=${prefix}_${last_tag}" >> "$GITHUB_OUTPUT"
+          echo "latest_tag=${prefix}_latest-tag" >> "$GITHUB_OUTPUT"
+          echo "any_tag=${prefix}_${{ inputs.comfyui_branch }}" >> "$GITHUB_OUTPUT"
+
 
       - uses: ./actions/package
-        name: Nightly - Package ComfyUI latest tag
+        name: Package ComfyUI - ${{ steps.resolve-latest-tag.outputs.version_tag }}
         if: ${{ steps.resolve-latest-tag.outputs.image_exists == '1' }}
         with:
           base_image: ${{ steps.resolve-base-image.outputs.base_image }}
@@ -52,10 +56,10 @@ jobs:
           docker-username: ${{ secrets.DOCKER_USER }}
           docker-password: ${{ secrets.DOCKER_TOKEN }}
           repository: naata/comfyui-rocm
-          image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${{ steps.resolve-latest-tag.outputs.comfyui_tag }}
+          image_tag: ${{ steps.resolve-latest-tag.outputs.version_tag }}
 
       - uses: ./actions/package
-        name: Nightly - Package ComfyUI latest tag
+        name: Package ComfyUI - ${{ steps.resolve-latest-tag.outputs.latest_tag }}
         if: ${{ steps.resolve-latest-tag.outputs.image_exists == '1' }}
         with:
           base_image: ${{ steps.resolve-base-image.outputs.base_image }}
@@ -63,10 +67,10 @@ jobs:
           docker-username: ${{ secrets.DOCKER_USER }}
           docker-password: ${{ secrets.DOCKER_TOKEN }}
           repository: naata/comfyui-rocm
-          image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_latest-tag
+          image_tag: ${{ steps.resolve-latest-tag.outputs.latest_tag }}
 
       - uses: ./actions/package
-        name: Package ComfyUI
+        name: Package ComfyUI - ${{ steps.resolve-latest-tag.outputs.any_tag }}
         if: github.event_name == 'workflow_dispatch'
         with:
           base_image: ${{ steps.resolve-base-image.outputs.base_image }}
@@ -74,15 +78,4 @@ jobs:
           docker-username: ${{ secrets.DOCKER_USER }}
           docker-password: ${{ secrets.DOCKER_TOKEN }}
           repository: naata/comfyui-rocm
-          image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_${{ inputs.comfyui_branch }}
-
-      # - uses: ./actions/package
-      #   name: Nightly - Package ComfyUI master
-      #   if: github.event_name == 'schedule'
-      #   with:
-      #     base_image: ${{ steps.resolve-base-image.outputs.base_image }}
-      #     comfyui_branch: master
-      #     docker-username: ${{ secrets.DOCKER_USER }}
-      #     docker-password: ${{ secrets.DOCKER_TOKEN }}
-      #     repository: naata/comfyui-rocm
-      #     image_tag: ${{ steps.resolve-base-image.outputs.base_image }}_comfyui_master
+          image_tag: ${{ steps.resolve-latest-tag.outputs.any_tag }}
