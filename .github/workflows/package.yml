@@ -28,7 +28,7 @@ jobs:
         run: |
           base_image=${{ inputs.base_image }}
           if [[ ${{ github.event_name }} == 'schedule' ]]; then
-            base_image="rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.12.0"
+            base_image="rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.11.0"
           fi
           echo "base_image=${base_image}" >> "$GITHUB_OUTPUT"
 
