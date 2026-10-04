@@ -7,7 +7,7 @@ inputs:
     default: master
     description: ComfyUI branch to package
   base_image:
-    default: rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.12.0
+    default: rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.11.0
     description: Base image for ROCM/PyTorch
   repository:
     required: true
