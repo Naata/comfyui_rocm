@@ -10,8 +10,9 @@ on:
         description: ComfyUI branch to package
       base_image:
         type: choice        
-        default: rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.11.0
+        default: rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
         options:
+          - rocm10.0_ubuntu26.04_py3.14_pytorch_release_2.13.0
           - rocm7.14.1_ubuntu26.04_py3.14_pytorch_release_2.11.0
           - rocm7.2.1_ubuntu24.04_py3.14_pytorch_2.10.0 
         description: Base image for ROCM/PyTorch
